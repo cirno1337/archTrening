@@ -18,11 +18,23 @@ function pickStartingVariant(chainIdsEasyToHard: string[], thresholds: number[],
   return getExercise(chosenId)
 }
 
-function makeSlot(slotId: string, exercise: Exercise, sets: number, restSeconds: number): ExerciseSlot {
+function makeSlot(slotId: string, exercise: Exercise, sets: number, restSeconds: number, targetOverride?: number): ExerciseSlot {
   const slot: ExerciseSlot = { slotId, exerciseId: exercise.id, targetSets: sets, restSeconds }
-  if (exercise.unit === 'reps') slot.targetReps = exercise.baseTarget
-  else slot.targetSeconds = exercise.baseTarget
+  const target = targetOverride ?? exercise.baseTarget
+  if (exercise.unit === 'reps') slot.targetReps = target
+  else slot.targetSeconds = target
   return slot
+}
+
+// Grease-the-Groove-style volume guidance: submaximal working sets at
+// roughly 40-50% of a tested max let you rack up several quality sets
+// without grinding every set out near failure, which is what lets you
+// actually hit 4 sets in a session instead of collapsing after set 1.
+// https://fitnessvolt.com/grease-the-groove-pull-ups/
+const VOLUME_FACTOR = 0.5
+
+function workingTargetFromTest(testScore: number): number {
+  return Math.max(1, Math.round(testScore * VOLUME_FACTOR))
 }
 
 export function generateProgram(test: FitnessTestResult): Program {
@@ -35,14 +47,23 @@ export function generateProgram(test: FitnessTestResult): Program {
   const squatStart = pickStartingVariant(['squat', 'split-squat', 'jump-squat'], [0, 40, 80], test.squats2min)
   const plankStart = pickStartingVariant(['plank', 'side-plank'], [0, 60], test.plankSeconds)
 
+  // Only scale off the test score when the starting variant is the exact
+  // movement the test measured (regular pull-up / push-up / plank) — for
+  // the easier or harder tiers (negatives, weighted, incline, diamond,
+  // side plank) the raw score doesn't transfer 1:1, so those keep their
+  // own tuned baseTarget instead.
+  const pullTarget = pullStart.id === 'pull-up' ? workingTargetFromTest(test.pullUps) : undefined
+  const pushTarget = pushStart.id === 'push-up' ? workingTargetFromTest(test.pushUps) : undefined
+  const plankTarget = plankStart.id === 'plank' ? workingTargetFromTest(test.plankSeconds) : undefined
+
   const templateA: WorkoutTemplate = {
     letter: 'A',
     name: 'Trening A',
     slots: [
-      makeSlot('A1', pullStart, 4, 90),
-      makeSlot('A2', pushStart, 4, 60),
+      makeSlot('A1', pullStart, 4, 90, pullTarget),
+      makeSlot('A2', pushStart, 4, 60, pushTarget),
       makeSlot('A3', squatStart, 3, 60),
-      makeSlot('A4', plankStart, 3, 45),
+      makeSlot('A4', plankStart, 3, 45, plankTarget),
     ],
   }
 
@@ -51,7 +72,7 @@ export function generateProgram(test: FitnessTestResult): Program {
     name: 'Trening B',
     slots: [
       makeSlot('B1', getExercise('scapular-pull'), 4, 90),
-      makeSlot('B2', pushStart, 3, 60),
+      makeSlot('B2', pushStart, 3, 60, pushTarget),
       makeSlot('B3', squatStart, 3, 60),
       makeSlot('B4', getExercise('leg-raise'), 3, 45),
     ],
@@ -61,7 +82,7 @@ export function generateProgram(test: FitnessTestResult): Program {
     letter: 'C',
     name: 'Trening C',
     slots: [
-      makeSlot('C1', pullStart, 4, 90),
+      makeSlot('C1', pullStart, 4, 90, pullTarget),
       makeSlot('C2', getExercise('pike-push-up'), 3, 60),
       makeSlot('C3', squatStart, 3, 60),
       makeSlot('C4', getExercise('rucking'), 1, 0),

@@ -55,6 +55,32 @@ describe('generateProgram', () => {
     const templateA = program.templates.find((t) => t.letter === 'A')!
     expect(templateA.slots[0].exerciseId).toBe('pull-up')
   })
+
+  it('scales the working target off the test score instead of a flat constant', () => {
+    // Someone who maxes out at 2 pull-ups should never be asked for more
+    // than that per set (previously a flat 3 reps — more than their max).
+    // Someone who maxes out at 20 push-ups should get a working set that's
+    // a meaningful fraction of that, not a flat 8 regardless of ability.
+    const program = generateProgram(makeTest({ pullUps: 2, pushUps: 20 }))
+    const templateA = program.templates.find((t) => t.letter === 'A')!
+    const pullSlot = templateA.slots[0]
+    const pushSlot = templateA.slots[1]
+    expect(pullSlot.exerciseId).toBe('pull-up')
+    expect(pullSlot.targetReps).toBeLessThanOrEqual(2)
+    expect(pullSlot.targetReps).toBeGreaterThanOrEqual(1)
+    expect(pushSlot.exerciseId).toBe('push-up')
+    expect(pushSlot.targetReps).toBe(10)
+  })
+
+  it('never asks for more reps per set than the tested max for the matching movement', () => {
+    for (let pullUps = 1; pullUps <= 30; pullUps++) {
+      const program = generateProgram(makeTest({ pullUps }))
+      const slot = program.templates.find((t) => t.letter === 'A')!.slots[0]
+      if (slot.exerciseId === 'pull-up') {
+        expect(slot.targetReps!).toBeLessThanOrEqual(pullUps)
+      }
+    }
+  })
 })
 
 describe('getCurrentWeek / getNextWorkoutLetter', () => {
