@@ -50,7 +50,7 @@ export function generateProgram(test: FitnessTestResult): Program {
     letter: 'B',
     name: 'Trening B',
     slots: [
-      makeSlot('B1', getExercise('inverted-row'), 4, 90),
+      makeSlot('B1', getExercise('scapular-pull'), 4, 90),
       makeSlot('B2', pushStart, 3, 60),
       makeSlot('B3', squatStart, 3, 60),
       makeSlot('B4', getExercise('leg-raise'), 3, 45),
@@ -64,7 +64,7 @@ export function generateProgram(test: FitnessTestResult): Program {
       makeSlot('C1', pullStart, 4, 90),
       makeSlot('C2', getExercise('pike-push-up'), 3, 60),
       makeSlot('C3', squatStart, 3, 60),
-      makeSlot('C4', getExercise('burpee'), 3, 60),
+      makeSlot('C4', getExercise('rucking'), 1, 0),
     ],
   }
 

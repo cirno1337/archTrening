@@ -13,8 +13,13 @@ export const EXERCISE_LIBRARY: Exercise[] = [
   { id: 'pull-up', name: 'Pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 2, baseTarget: 3, graduationTarget: 10 },
   { id: 'weighted-pull-up', name: 'Weighted pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 3, baseTarget: 3 },
 
-  // Row (standalone back exercise, no chain)
+  // Row (standalone back exercise, no chain). Kept for backward
+  // compatibility with already-generated programs — no longer used by the
+  // generator since it needs a low bar/rings the equipment set below
+  // doesn't assume.
   { id: 'inverted-row', name: 'Inverted row', category: 'pull', unit: 'reps', variantGroup: 'row', variantOrder: 0, baseTarget: 6, graduationTarget: 15 },
+  // Bar-only back exercise (pull-up bar, no extra equipment).
+  { id: 'scapular-pull', name: 'Scapular pull', category: 'pull', unit: 'reps', variantGroup: 'scapular', variantOrder: 0, baseTarget: 6, graduationTarget: 15 },
 
   // Push chain
   { id: 'incline-push-up', name: 'Incline push-up', category: 'push', unit: 'reps', variantGroup: 'push', variantOrder: 0, baseTarget: 8, graduationTarget: 20 },
@@ -36,8 +41,12 @@ export const EXERCISE_LIBRARY: Exercise[] = [
   // Core: standalone
   { id: 'leg-raise', name: 'Leg raise', category: 'core', unit: 'reps', variantGroup: 'leg-raise', variantOrder: 0, baseTarget: 10, graduationTarget: 25 },
 
-  // Conditioning (standalone)
+  // Conditioning (standalone). Kept for backward compatibility with
+  // already-generated programs — no longer used by the generator.
   { id: 'burpee', name: 'Burpee', category: 'cardio', unit: 'reps', variantGroup: 'burpee', variantOrder: 0, baseTarget: 8, graduationTarget: 20 },
+  // Rucking (weighted march) — the intended use for the plates. Progresses
+  // in whole minutes via stepSize; target is stored in seconds (mm:ss).
+  { id: 'rucking', name: 'Rucking (marsz z obciążeniem)', category: 'cardio', unit: 'seconds', variantGroup: 'rucking', variantOrder: 0, baseTarget: 1200, stepSize: 60 },
 ]
 
 export function getExercise(id: string): Exercise {

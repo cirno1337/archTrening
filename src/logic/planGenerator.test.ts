@@ -39,6 +39,16 @@ describe('generateProgram', () => {
     expect(templateA.slots[1].exerciseId).toBe('diamond-push-up')
     expect(templateA.slots[2].exerciseId).toBe('jump-squat')
   })
+
+  it('only uses exercises that need a pull-up bar, plates, or nothing at all', () => {
+    // No low bar/rings (inverted row) and no bodyweight-only conditioning
+    // (burpee) — the program should fit a pull-up bar + up to 3x10kg plates.
+    const program = generateProgram(makeTest())
+    const templateB = program.templates.find((t) => t.letter === 'B')!
+    const templateC = program.templates.find((t) => t.letter === 'C')!
+    expect(templateB.slots[0].exerciseId).toBe('scapular-pull')
+    expect(templateC.slots[3].exerciseId).toBe('rucking')
+  })
 })
 
 describe('getCurrentWeek / getNextWorkoutLetter', () => {

@@ -52,7 +52,7 @@ export function computeNextSlot(slot: ExerciseSlot, actual: number[], difficulty
   const met = metAllSets(target, sets, values)
 
   if (met) {
-    const increment = INCREMENTS[difficulty]
+    const increment = INCREMENTS[difficulty] * (exercise.stepSize ?? 1)
     const newTarget = target + increment
     const graduation = exercise.graduationTarget
     if (graduation !== undefined && newTarget >= graduation) {

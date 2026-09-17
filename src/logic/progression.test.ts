@@ -48,4 +48,12 @@ describe('computeNextSlot', () => {
     const result = computeNextSlot(slot, [30, 30, 30], 1)
     expect(result.slot.targetSeconds).toBe(32)
   })
+
+  it('progresses long-duration exercises in whole-minute steps via stepSize', () => {
+    // rucking has stepSize 60 (seconds), so a "very easy" (+2) full completion
+    // should add 2 minutes, not 2 seconds.
+    const slot: ExerciseSlot = { slotId: 'C4', exerciseId: 'rucking', targetSets: 1, targetSeconds: 1200, restSeconds: 0 }
+    const result = computeNextSlot(slot, [1200], 1)
+    expect(result.slot.targetSeconds).toBe(1320)
+  })
 })

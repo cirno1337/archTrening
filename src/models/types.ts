@@ -21,6 +21,10 @@ export interface Exercise {
   variantOrder: number
   baseTarget: number
   graduationTarget?: number
+  /** Size of one progression increment for this exercise (default 1). Lets
+   * long-duration exercises like rucking progress in whole minutes (60)
+   * instead of imperceptible single seconds. */
+  stepSize?: number
 }
 
 export type FitnessLevel = 'poczatkujacy' | 'podstawowy' | 'sredniozaawansowany' | 'zaawansowany'
