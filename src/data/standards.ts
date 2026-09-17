@@ -58,3 +58,16 @@ export const LEVEL_LABELS: Record<FitnessLevel, string> = {
   sredniozaawansowany: 'Średniozaawansowany',
   zaawansowany: 'Zaawansowany',
 }
+
+// Difficulty multiplier used by the plan generator for exercises that have
+// no matching fitness-test metric to scale off directly (e.g. scapular
+// pulls, leg raises, rucking duration). This is a design assumption, not a
+// research-backed conversion — kept here, isolated and editable, so a
+// beginner and an advanced athlete at least don't get the exact same
+// starting target for these.
+export const LEVEL_VOLUME_MULTIPLIER: Record<FitnessLevel, number> = {
+  poczatkujacy: 0.7,
+  podstawowy: 1,
+  sredniozaawansowany: 1.3,
+  zaawansowany: 1.6,
+}

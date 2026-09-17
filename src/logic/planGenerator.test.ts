@@ -81,6 +81,41 @@ describe('generateProgram', () => {
       }
     }
   })
+
+  it('scales the squat working target off squats2min instead of a flat constant', () => {
+    const low = generateProgram(makeTest({ squats2min: 15 }))
+    const high = generateProgram(makeTest({ squats2min: 39 }))
+    const lowSlot = low.templates.find((t) => t.letter === 'A')!.slots[2]
+    const highSlot = high.templates.find((t) => t.letter === 'A')!.slots[2]
+    expect(lowSlot.exerciseId).toBe('squat')
+    expect(highSlot.exerciseId).toBe('squat')
+    expect(highSlot.targetReps!).toBeGreaterThan(lowSlot.targetReps!)
+  })
+
+  it('scales side plank off the plank test score using the plank/side-plank ratio', () => {
+    const shortHold = generateProgram(makeTest({ plankSeconds: 65 }))
+    const longHold = generateProgram(makeTest({ plankSeconds: 150 }))
+    const shortSlot = shortHold.templates.find((t) => t.letter === 'A')!.slots[3]
+    const longSlot = longHold.templates.find((t) => t.letter === 'A')!.slots[3]
+    expect(shortSlot.exerciseId).toBe('side-plank')
+    expect(longSlot.exerciseId).toBe('side-plank')
+    expect(longSlot.targetSeconds!).toBeGreaterThan(shortSlot.targetSeconds!)
+  })
+
+  it('scales exercises with no matching test metric by overall fitness level', () => {
+    const beginner = generateProgram(makeTest({ pushUps: 3, pullUps: 0, squats2min: 10, plankSeconds: 15, run3kmSeconds: 1200 }))
+    const advanced = generateProgram(makeTest({ pushUps: 50, pullUps: 15, squats2min: 90, plankSeconds: 160, run3kmSeconds: 700 }))
+    expect(beginner.startingLevel).toBe('poczatkujacy')
+    expect(advanced.startingLevel).toBe('zaawansowany')
+
+    const beginnerScapular = beginner.templates.find((t) => t.letter === 'B')!.slots[0].targetReps!
+    const advancedScapular = advanced.templates.find((t) => t.letter === 'B')!.slots[0].targetReps!
+    expect(advancedScapular).toBeGreaterThan(beginnerScapular)
+
+    const beginnerRucking = beginner.templates.find((t) => t.letter === 'C')!.slots[3].targetSeconds!
+    const advancedRucking = advanced.templates.find((t) => t.letter === 'C')!.slots[3].targetSeconds!
+    expect(advancedRucking).toBeGreaterThan(beginnerRucking)
+  })
 })
 
 describe('getCurrentWeek / getNextWorkoutLetter', () => {
