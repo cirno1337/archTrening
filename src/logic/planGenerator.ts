@@ -27,8 +27,8 @@ function makeSlot(slotId: string, exercise: Exercise, sets: number, restSeconds:
 
 export function generateProgram(test: FitnessTestResult): Program {
   const pullStart = pickStartingVariant(
-    ['negative-pull-up', 'assisted-pull-up', 'pull-up', 'weighted-pull-up'],
-    [0, 1, 3, 8],
+    ['negative-pull-up', 'pull-up', 'weighted-pull-up'],
+    [0, 1, 8],
     test.pullUps,
   )
   const pushStart = pickStartingVariant(['incline-push-up', 'push-up', 'diamond-push-up'], [0, 10, 30], test.pushUps)

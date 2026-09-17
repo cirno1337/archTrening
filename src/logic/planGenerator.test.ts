@@ -49,6 +49,12 @@ describe('generateProgram', () => {
     expect(templateB.slots[0].exerciseId).toBe('scapular-pull')
     expect(templateC.slots[3].exerciseId).toBe('rucking')
   })
+
+  it('skips assisted pull-ups (needs a resistance band) and goes straight to real pull-ups', () => {
+    const program = generateProgram(makeTest({ pullUps: 2 }))
+    const templateA = program.templates.find((t) => t.letter === 'A')!
+    expect(templateA.slots[0].exerciseId).toBe('pull-up')
+  })
 })
 
 describe('getCurrentWeek / getNextWorkoutLetter', () => {

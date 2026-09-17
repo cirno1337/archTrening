@@ -49,6 +49,22 @@ describe('computeNextSlot', () => {
     expect(result.slot.targetSeconds).toBe(32)
   })
 
+  it('advances from negative pull-ups straight to real pull-ups (no assisted step)', () => {
+    // negative-pull-up graduates at 8 reps and has no resistance-band step
+    // in between — it should hand off directly to bar-only pull-ups.
+    const slot: ExerciseSlot = { slotId: 'A1', exerciseId: 'negative-pull-up', targetSets: 4, targetReps: 7, restSeconds: 90 }
+    const result = computeNextSlot(slot, [7, 7, 7, 7], 2)
+    expect(result.variantChanged).toBe('advanced')
+    expect(result.slot.exerciseId).toBe('pull-up')
+  })
+
+  it('regresses from pull-ups back to negative pull-ups when failing at the base target', () => {
+    const slot: ExerciseSlot = { slotId: 'A1', exerciseId: 'pull-up', targetSets: 4, targetReps: 3, restSeconds: 90 }
+    const result = computeNextSlot(slot, [1, 1, 0, 0], 5)
+    expect(result.variantChanged).toBe('regressed')
+    expect(result.slot.exerciseId).toBe('negative-pull-up')
+  })
+
   it('progresses long-duration exercises in whole-minute steps via stepSize', () => {
     // rucking has stepSize 60 (seconds), so a "very easy" (+2) full completion
     // should add 2 minutes, not 2 seconds.

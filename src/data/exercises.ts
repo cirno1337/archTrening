@@ -7,11 +7,16 @@ import type { Exercise } from '../models/types'
 // small so it is easy to extend later.
 
 export const EXERCISE_LIBRARY: Exercise[] = [
-  // Pull chain
+  // Pull chain (bar-only — no resistance bands or assist machine).
   { id: 'negative-pull-up', name: 'Negative pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 0, baseTarget: 3, graduationTarget: 8 },
-  { id: 'assisted-pull-up', name: 'Assisted pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 1, baseTarget: 4, graduationTarget: 10 },
-  { id: 'pull-up', name: 'Pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 2, baseTarget: 3, graduationTarget: 10 },
-  { id: 'weighted-pull-up', name: 'Weighted pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 3, baseTarget: 3 },
+  { id: 'pull-up', name: 'Pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 1, baseTarget: 3, graduationTarget: 10 },
+  { id: 'weighted-pull-up', name: 'Weighted pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull', variantOrder: 2, baseTarget: 3 },
+
+  // Kept for backward compatibility with already-generated programs — no
+  // longer used by the generator since it needs a resistance band or an
+  // assisted pull-up machine. Moved out of the 'pull' variant group so it
+  // doesn't collide with the bar-only chain above.
+  { id: 'assisted-pull-up', name: 'Assisted pull-up', category: 'pull', unit: 'reps', variantGroup: 'pull-legacy-assisted', variantOrder: 0, baseTarget: 4, graduationTarget: 10 },
 
   // Row (standalone back exercise, no chain). Kept for backward
   // compatibility with already-generated programs — no longer used by the
